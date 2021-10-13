@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>test page</title>
+
+  <!-- Font Bootstap 	-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+</head>
+<style>
+  .jumbotron {
+    background-color: rgb(236, 236, 193);
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+
+<body>
+
+  <div class="jumbotron jumbotron-fluid">
+    <h2>test page</h2>
+
+    <input type="text" name="esp" id="espmsg" placeholder="input esp">
+    <button class="btn btn-primary" name="subEsp" id="subEsp">SendToEsp</button>
+    <input type="text" name="apk" id="apkmsg" placeholder="input apk">
+    <button class="btn btn-primary" name="subApk" id="subApk">SendToApk</button>
+    <br>
+
+
+    <textarea name="answer esp" id="aesp" cols="40" rows="10" placeholder="esp said"></textarea>
+
+    <textarea name="answer apk" id="aapk" cols="40" rows="10" placeholder="apk said"></textarea>
+    <br>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!--
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  
+  <script src="{{ url_for('static', filename='scripts/socketio.js') }}"></script>
+  -->
+
+  <script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port)
+    socket.on('connect', function () {
+      socket.emit('my event', {
+        data: 'User Connected'
+      })
+    });
+    $('#subEsp').click(function () {
+      var espmsgvalue = $('#espmsg').val();
+      console.log(espmsgvalue);
+      socket.emit('esp', {
+        msg: espmsgvalue
+      })
+      //$('#aesp').val('');
+      $('#espmsg').val('');
+    });
+
+    $('#subApk').click(function () {
+      var apkmsgvalue = $('#apkmsg').val();
+      console.log(apkmsgvalue);
+      socket.emit('apk', {
+        msg: apkmsgvalue
+      })
+      //$('#aesp').val('');
+      $('#apkmsg').val('');
+
+    });
+
+    socket.on('msgfromapk', function (msgfromesp) {
+      if (msgfromesp.msg.length !== 0) {
+        console.log("msg from server :" + msgfromesp.msg);
+
+        $('#aesp').append(msgfromesp.msg + "\n");
+        $('#aesp').scrollTop($('#aesp')[0].scrollHeight);
+      }
+    });
+
+    socket.on('msgfromesp', function (msgfromapk) {
+      if (msgfromapk.msg.length !== 0) {
+        console.log("msg from server :" + msgfromapk.msg);
+        $('#aapk').append(msgfromapk.msg + "\n");
+        $('#aapk').scrollTop($('#aapk')[0].scrollHeight);
+      }
+    });
+  </script>
+
+  <!--
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.js')}}"></script>
+     Bootstrap tooltips 
+    <script type="text/javascript" src="{{url_for('static', filename='js/popper.min.js')}}"></script>
+    Bootstrap core JavaScript 
+    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+     MDB core JavaScript 
+    <script type="text/javascript" src="{{url_for('static', filename='js/mdb.min.js')}}"></script>
+  -->
+
+</body>
+
+</html>

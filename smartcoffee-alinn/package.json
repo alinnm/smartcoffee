@@ -1,0 +1,17 @@
+
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "node",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "alinn",
+  "license": "ISC",
+  "dependencies": {
+    "express": "*",
+    "pg": "^8.2.1",
+    "socket.io": "*"
+  }
+}
